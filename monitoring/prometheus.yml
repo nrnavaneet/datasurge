@@ -1,0 +1,31 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "/etc/prometheus/alert-rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter for basic system metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Application metrics from main.py
+  - job_name: 'datasurge-producer'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # Business metrics from processed Kafka data
+  - job_name: 'datasurge-business'
+    static_configs:
+      - targets: ['host.docker.internal:8001']
+    scrape_interval: 10s
+    scrape_timeout: 5s

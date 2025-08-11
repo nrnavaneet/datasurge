@@ -1,0 +1,201 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "DataSurge Business & Operational Dashboard",
+    "tags": ["datasurge", "business", "operations"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Messages Produced/Second",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(datasurge_messages_produced_total[1m]))",
+            "legendFormat": "Producer Rate"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 10},
+                {"color": "green", "value": 50}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Large Transactions Detected",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(datasurge_large_transactions_total[1m])",
+            "legendFormat": "Large Transactions/sec"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 6, "x": 6, "y": 0},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 5},
+                {"color": "red", "value": 20}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Anomalies Detected",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(datasurge_anomalies_detected_total[5m])",
+            "legendFormat": "Anomalies/sec"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 6, "x": 12, "y": 0},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 1},
+                {"color": "red", "value": 5}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Active Users & Merchants",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "datasurge_active_users",
+            "legendFormat": "Users"
+          },
+          {
+            "expr": "datasurge_active_merchants",
+            "legendFormat": "Merchants"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 6, "x": 18, "y": 0},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Transaction Volume Trends",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(datasurge_messages_produced_total[1m])",
+            "legendFormat": "Raw Messages"
+          },
+          {
+            "expr": "rate(datasurge_large_transactions_total[1m])",
+            "legendFormat": "Large Transactions"
+          },
+          {
+            "expr": "rate(datasurge_anomalies_detected_total[1m])",
+            "legendFormat": "Anomalies"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "Transaction Amount Distribution",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, datasurge_business_transaction_amount_bucket)",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, datasurge_business_transaction_amount_bucket)",
+            "legendFormat": "Median"
+          },
+          {
+            "expr": "datasurge_avg_transaction_amount",
+            "legendFormat": "Rolling Average"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD"
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "System Health",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+            "legendFormat": "CPU Usage %"
+          },
+          {
+            "expr": "((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes) * 100",
+            "legendFormat": "Memory Usage %"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 0, "y": 14},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "max": 100
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Processing Performance",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, datasurge_message_produce_duration_seconds_bucket)",
+            "legendFormat": "Producer Latency p95"
+          },
+          {
+            "expr": "rate(datasurge_messages_failed_total[5m])",
+            "legendFormat": "Failed Messages/sec"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 12, "y": 14},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      }
+    ],
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+}

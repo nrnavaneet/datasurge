@@ -97,6 +97,7 @@ def produce_transaction(thread_id):
         while True:
             transaction = generate_transaction()
             try:
+                start_time = time.time()
                 local_producer.produce(
                     topic=TOPIC_NAME,
                     key=transaction["userId"],

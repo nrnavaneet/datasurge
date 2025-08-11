@@ -1,0 +1,69 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "DataSurge Kafka Metrics",
+    "tags": ["datasurge", "kafka"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Kafka Broker Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"kafka-brokers\"}",
+            "legendFormat": "{{instance}}"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 24, "x": 0, "y": 0},
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"options": {"0": {"text": "DOWN", "color": "red"}}, "type": "value"},
+              {"options": {"1": {"text": "UP", "color": "green"}}, "type": "value"}
+            ]
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Topic Message Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(rate(kafka_server_brokertopicmetrics_messagesin_total[5m])) by (topic)",
+            "legendFormat": "{{topic}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Consumer Lag",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "kafka_consumer_lag_max",
+            "legendFormat": "{{consumergroup}} - {{topic}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      }
+    ],
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "refresh": "10s"
+  }
+}

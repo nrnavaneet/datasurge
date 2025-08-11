@@ -1,0 +1,49 @@
+groups:
+  - name: datasurge.business
+    rules:
+      # Business alerts
+      - alert: NoTransactionsProcessed
+        expr: rate(datasurge_messages_produced_total[5m]) == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No transactions being produced"
+          description: "No transactions have been produced in the last 5 minutes"
+
+      - alert: HighAnomalyRate
+        expr: rate(datasurge_anomalies_detected_total[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High anomaly detection rate"
+          description: "Anomaly rate is {{ $value }} per second - investigate for potential fraud"
+
+      - alert: HighValueTransactionSpike
+        expr: rate(datasurge_large_transactions_total[1m]) > 10
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Spike in high-value transactions"
+          description: "Large transaction rate is {{ $value }} per second"
+
+      # System alerts
+      - alert: HighCPUUsage
+        expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% for more than 3 minutes"
+
+      - alert: ProcessingFailures
+        expr: rate(datasurge_messages_failed_total[5m]) > 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High message failure rate"
+          description: "Message failure rate is {{ $value }} per second"
